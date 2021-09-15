@@ -8,7 +8,7 @@ steps:
 # Clone the repository.
 - name: 'gcr.io/cloud-builders/git'
   args: ['clone', '--single-branch', '--branch',
-         'main', 'https://github.com/sarath2812/gcp_vertexai',
+         'main', 'https://github.com/deep-diver/Model-Training-as-a-CI-CD-System',
          '--depth', '1',
          '--verbose']
   id: 'Clone Repository'
