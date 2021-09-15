@@ -1,0 +1,16 @@
+######################################################################################################
+# CI/CD steps for Cloud Build to get a compiled TFX pipeline ready for exectuion.
+# Referenced from:
+# https://github.com/GoogleCloudPlatform/mlops-with-vertex-ai/blob/main/build/pipeline-deployment.yaml
+######################################################################################################
+
+steps:
+# Clone the repository.
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', '--single-branch', '--branch',
+         '$_BRANCH', '$_REPO_URL',
+         '--depth', '1',
+         '--verbose']
+  id: 'Clone Repository'
+
+
