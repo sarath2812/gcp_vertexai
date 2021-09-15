@@ -12,5 +12,6 @@ steps:
          '--depth', '1',
          '--verbose']
   id: 'Clone Repository'
+logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
 
 
