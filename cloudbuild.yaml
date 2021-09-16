@@ -98,4 +98,4 @@ availableSecrets:
   secretManager:
   - versionName: projects/584418773784/secrets/git-secret-key/versions/1
     env: 'SSH_KEY'
-logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
+logsBucket: 'gs://aivertex-bucket/cloud_build_logs/'
