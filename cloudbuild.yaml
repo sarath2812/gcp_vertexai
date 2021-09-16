@@ -40,15 +40,24 @@ steps:
   - name: 'ssh'
     path: /root/.ssh
 
-- name: 'python'
-    args: 
-    - -C
-    - |
-       cp . ./
-       python ./pipeline/pipeline_kfp.py
-   volumes:
+- name: python
+  args:
+  - cp . ./
+  - python ./pipeline/pipeline_kfp.py
+  - git@github.com:sarath2812/gcp_vertexai
+  volumes:
   - name: 'ssh'
     path: /root/.ssh
+
+# - name: 'python'
+#     args: 
+#     - -C
+#     - |
+#        cp . ./
+#        python ./pipeline/pipeline_kfp.py
+#    volumes:
+#   - name: 'ssh'
+#     path: /root/.ssh
 
 # - name: 'gcr.io/cloud-builders/docker'
 #     args: ['build', '-t', 
