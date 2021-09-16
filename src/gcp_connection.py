@@ -2,7 +2,7 @@ import os
 from google.cloud import aiplatform
 import sys
 sys.path.append("..")
-from config import config as cfg
+from config import constants as cfg
 
 
 CREDENTIAL_PATH = r"../config/key.json"
