@@ -43,6 +43,11 @@ steps:
 - name: python
   entrypoint: pip
   args: ["install","-r","requirements.txt"]
+
+
+- name: python
+  entrypoint: python
+  args: ["./pipeline/pipeline_kfp.py"]
 #   volumes:
 #   - name: 'ssh'
 #     path: /root/.ssh
