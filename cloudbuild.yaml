@@ -57,11 +57,10 @@ steps:
   args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',  'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
+  args: ['push', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
 
 - name: 'gcr.io/cloud-builders/docker'
-    args: ['run',  'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
-
+  args: ['run', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
 
 # - name: python
 #   entrypoint: pip 
