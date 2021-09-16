@@ -6,4 +6,6 @@ COPY . ./
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python","./pipeline/pipeline_kfp.py"]
+WORKDIR ./pipeline
+
+ENTRYPOINT ["python","pipeline_kfp.py"]
