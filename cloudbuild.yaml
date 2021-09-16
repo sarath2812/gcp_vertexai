@@ -1,17 +1,46 @@
-######################################################################################################
-# CI/CD steps for Cloud Build to get a compiled TFX pipeline ready for exectuion.
-# Referenced from:
-# https://github.com/GoogleCloudPlatform/mlops-with-vertex-ai/blob/main/build/pipeline-deployment.yaml
-######################################################################################################
+# ######################################################################################################
+# # CI/CD steps for Cloud Build to get a compiled TFX pipeline ready for exectuion.
+# # Referenced from:
+# # https://github.com/GoogleCloudPlatform/mlops-with-vertex-ai/blob/main/build/pipeline-deployment.yaml
+# ######################################################################################################
 
+# steps:
+# # Clone the repository.
+# - name: 'gcr.io/cloud-builders/git'
+#   args: ['clone', '--single-branch', '--branch',
+#          'main', 'https://github.com/deep-diver/Model-Training-as-a-CI-CD-System',
+#          '--depth', '1',
+#          '--verbose']
+#   id: 'Clone Repository'
+# logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
+
+
+# Access the id_github file from Secret Manager, and setup SSH
 steps:
-# Clone the repository.
 - name: 'gcr.io/cloud-builders/git'
-  args: ['clone', '--single-branch', '--branch',
-         'main', 'https://github.com/deep-diver/Model-Training-as-a-CI-CD-System',
-         '--depth', '1',
-         '--verbose']
-  id: 'Clone Repository'
-logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
+  secretEnv: ['SSH_KEY']
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    echo "$$SSH_KEY" >> /root/.ssh/id_rsa
+    chmod 400 /root/.ssh/id_rsa
+    cp known_hosts.github /root/.ssh/known_hosts
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
 
+# Clone the repository
+- name: 'gcr.io/cloud-builders/git'
+  args:
+  - clone
+  - --recurse-submodules
+  - git@github.com:sarath2812/gcp_vertexai
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
 
+availableSecrets:
+  secretManager:
+  - versionName: projects/peak-catbird-324206/secrets/secret-name/versions/latest
+    env: 'SSH_KEY'
