@@ -36,9 +36,9 @@ steps:
   - clone
   - --recurse-submodules
   - git@github.com:sarath2812/gcp_vertexai
-  volumes:
-  - name: 'ssh'
-    path: /root/.ssh
+#   volumes:
+#   - name: 'ssh'
+#     path: /root/.ssh
 
 availableSecrets:
   secretManager:
