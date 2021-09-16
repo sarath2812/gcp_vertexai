@@ -44,3 +44,4 @@ availableSecrets:
   secretManager:
   - versionName: projects/peak-catbird-324206/secrets/secret-name/versions/latest
     env: 'SSH_KEY'
+logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
