@@ -40,9 +40,9 @@ steps:
   - name: 'ssh'
     path: /root/.ssh
 
-- name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 
-           'us-central1-docker.pkg.dev/peak-catbird-324206/cicdimage:v1', '.']    
+# - name: 'gcr.io/cloud-builders/docker'
+#     args: ['build', '-t', 
+#            'us-central1-docker.pkg.dev/peak-catbird-324206/cicdimage:v1', '.']    
 
 availableSecrets:
   secretManager:
