@@ -53,13 +53,16 @@ steps:
 #   args: ['build', '-t', 
 #            'us-central1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/myimage:$SHORT_SHA', '.']
 
-- name: python
-  entrypoint: pip 
-  args: ["install","-r","requirements.txt"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1', '.']
 
-- name: python
-  entrypoint: python
-  args: ["./pipeline/pipeline_kfp.py"]
+# - name: python
+#   entrypoint: pip 
+#   args: ["install","-r","requirements.txt"]
+
+# - name: python
+#   entrypoint: python
+#   args: ["./pipeline/pipeline_kfp.py"]
 #   volumes:
 #   - name: 'ssh'
 #     path: /root/.ssh
