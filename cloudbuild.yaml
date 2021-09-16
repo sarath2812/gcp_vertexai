@@ -54,13 +54,13 @@ steps:
 #            'us-central1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/myimage:$SHORT_SHA', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
+  args: ['push', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run',  'us-central1-docker.pkg.dev/peak-catbird-324206/gcp_vertexai/myimage:v1']
+  args: ['run',  'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
 
 # - name: python
 #   entrypoint: pip 
