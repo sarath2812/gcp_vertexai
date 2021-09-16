@@ -7,7 +7,11 @@ from google.cloud import aiplatform
 from google_cloud_pipeline_components import aiplatform as gcc_aip
 from kfp.v2.google import experimental
 import sys
+import os
 sys.path.append("..")
+print("="*100)
+print(os.getcwd())
+print("="*100)
 from config import constants as cfg
 from src import gcp_connection as gc
 
