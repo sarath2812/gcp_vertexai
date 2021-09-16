@@ -45,3 +45,8 @@ availableSecrets:
   - versionName: projects/584418773784/secrets/git-secret-key/versions/1
     env: 'SSH_KEY'
 logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
+
+
+- name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'us-central1-docker.pkg.dev/peak-catbird-324206/cicdimage:v1', '.']
