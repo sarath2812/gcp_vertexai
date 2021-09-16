@@ -42,7 +42,7 @@ steps:
 
 - name: python
   args: 
-  -  -pip install -r  requirements.txt && python ./pipeline/pipeline_kfp.py
+  -  pip install -r  requirements.txt && python pipeline/pipeline_kfp.py
 
 
 # - name: python
