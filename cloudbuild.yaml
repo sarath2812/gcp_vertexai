@@ -1,19 +1,10 @@
-# ######################################################################################################
-# # CI/CD steps for Cloud Build to get a compiled TFX pipeline ready for exectuion.
-# # Referenced from:
-# # https://github.com/GoogleCloudPlatform/mlops-with-vertex-ai/blob/main/build/pipeline-deployment.yaml
-# ######################################################################################################
-
-# steps:
-# # Clone the repository.
-# - name: 'gcr.io/cloud-builders/git'
-#   args: ['clone', '--single-branch', '--branch',
-#          'main', 'https://github.com/deep-diver/Model-Training-as-a-CI-CD-System',
-#          '--depth', '1',
-#          '--verbose']
-#   id: 'Clone Repository'
-# logsBucket: 'gs://aivertex-bucket/custom_model_bucket/'
-
+# /**
+#  * @author Sarath Chandra Asapu
+#  * @email sarath.chandra.asapu@accenture.com
+#  * @create date 2021-09-17 13:09:02
+#  * @modify date 2021-09-17 13:09:02
+#  * @desc [description]
+#  */
 
 # Access the id_github file from Secret Manager, and setup SSH
 steps:
@@ -40,6 +31,22 @@ steps:
   - name: 'ssh'
     path: /root/.ssh
 
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1', '.']
+
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['push', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run',  'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/584418773784/secrets/git-secret-key/versions/1
+    env: 'SSH_KEY'
+logsBucket: 'gs://aivertex-bucket/cloud_build_logs/' 
+
 # - name: python
 # #   entrypoint: pip 
 #   args: 
@@ -53,14 +60,6 @@ steps:
 #   args: ['build', '-t', 
 #            'us-central1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/myimage:$SHORT_SHA', '.']
 
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1', '.']
-
-# - name: 'gcr.io/cloud-builders/docker'
-#   args: ['push', 'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['run',  'us-central1-docker.pkg.dev/peak-catbird-324206/myimage:v1']
 
 # - name: python
 #   entrypoint: pip 
@@ -94,8 +93,3 @@ steps:
 #     args: ['build', '-t', 
 #            'us-central1-docker.pkg.dev/peak-catbird-324206/cicdimage:v1', '.']    
 
-availableSecrets:
-  secretManager:
-  - versionName: projects/584418773784/secrets/git-secret-key/versions/1
-    env: 'SSH_KEY'
-logsBucket: 'gs://aivertex-bucket/cloud_build_logs/' 
