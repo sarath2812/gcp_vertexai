@@ -6,18 +6,18 @@
 #  * @desc [description]
 #  */
 
-# PIPELINE_NAME = 'pipeline_tfx'
-# DATASET = "LoanApplyData-bank.csv"
-# DATA_PATH = '../data'
-# SERVING_MODEL_DIR = '../artifacts/'+PIPELINE_NAME+'/serving_model'
-# PIPELINE_ROOT = '../artifacts/'+PIPELINE_NAME
-# METADATA = '../artifacts/'+PIPELINE_NAME+'/metadata'
-# PROJECT_ID = 'peak-catbird-324206'
-# REGION = 'us-central1'
-
-
 PROJECT_ID = 'peak-catbird-324206'
 REGION = 'us-central1'
+
+PIPELINE_NAME_TFX = 'pipelinetfxvertexai2-cicd'
+DATASET = "LoanApplyData-bank.csv"
+DATA_PATH = 'gs://aivertex-bucket/TFX_Pipeline/data'
+SERVING_MODEL_DIR = 'gs://aivertex-bucket/TFX_Pipeline/'+PIPELINE_NAME_TFX+'/serving_model_tfx'
+PIPELINE_ROOT = 'gs://aivertex-bucket/TFX_Pipeline/pipeline_root'
+PIPELINE_TEMPLATE = PIPELINE_NAME_TFX + 'pipelinetfx-cicd.json'
+MODULE_PATH = 'gs://aivertex-bucket/TFX_Pipeline/trainer_v2.py'
+
+
 DEPLOY_IMAGE = "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest"
 ARTIFACT_DIR = 'gs://aivertex-bucket/custom_model_bucket/'
 DATASET_PATH = ARTIFACT_DIR+"LoanApplyData-bank.csv"
