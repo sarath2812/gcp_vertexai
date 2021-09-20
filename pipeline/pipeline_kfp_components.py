@@ -39,6 +39,22 @@ ENDPOINT_NAME = cfg.ENDPOINT_NAME
 TEMPLATE_JSON = cfg.TEMPLATE_JSON
 
 
+print("="*100)
+print(PROJECT_ID) 
+print(REGION) 
+print(DEPLOY_IMAGE)
+print(ARTIFACT_DIR)
+print(DATASET_PATH)
+print(BUCKET_NAME) 
+print(SUB_FOLDER) 
+print(PIPELINE_NAME)
+print(MODEL_DISPLAY_NAME)
+print(CUSTOM_JOB_NAME)
+print(ENDPOINT_NAME) 
+print(TEMPLATE_JSON) 
+print("="*100)
+
+
 @component(packages_to_install = ["pandas","fsspec","gcsfs","sklearn"])
 def Prepare_dataset(dataset_train: Output[Dataset],dataset_path:str):
     """
