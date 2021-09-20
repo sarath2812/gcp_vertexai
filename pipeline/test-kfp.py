@@ -1,41 +1,27 @@
-# /**
-#  * @author Sarath Chandra Asapu
-#  * @email sarath.chandra.asapu@accenture.com
-#  * @create date 2021-09-17 13:07:01
-#  * @modify date 2021-09-17 13:07:01
-#  * @desc [description]
-#  */
-
 from kfp.v2 import compiler,dsl
 from kfp.v2.dsl import Artifact,Dataset,Input,Model,Output,Metrics,ClassificationMetrics,component
 from kfp.v2.google.client import AIPlatformClient
 import kfp
-from kfp.v2 import compiler  
 from google.cloud import aiplatform
 from google_cloud_pipeline_components import aiplatform as gcc_aip
 from kfp.v2.google import experimental
 import sys
-import os
+PROJECT_ID = 'peak-catbird-324206'
+REGION = 'us-central1'
+DEPLOY_IMAGE = "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest"
+ARTIFACT_DIR = 'gs://aivertex-bucket/custom_model_bucket/'
+DATASET_PATH = ARTIFACT_DIR+"LoanApplyData-bank.csv"
+BUCKET_NAME = 'aivertex-bucket'
+SUB_FOLDER = 'custom_model_bucket/'
+PIPELINE_NAME = "custom-pipeline-kfp-test"
+MODEL_DISPLAY_NAME = "custom-model-kfp-test"
+CUSTOM_JOB_NAME = "custom-runjob-kfp-test"
+ENDPOINT_NAME = "custom-endpoint-kfp-test"
+TEMPLATE_JSON = "train_upload_deploy-kfp-test.json"
+
 sys.path.append("..")
 from config import constants as cfg
 from src import gcp_connection as gc
-
-gc.aiplatform_init()
-
-PROJECT_ID = cfg.PROJECT_ID
-REGION = cfg.REGION
-DEPLOY_IMAGE = cfg.DEPLOY_IMAGE
-ARTIFACT_DIR = cfg.ARTIFACT_DIR
-DATASET_PATH = cfg.DATASET_PATH
-BUCKET_NAME = cfg.BUCKET_NAME
-SUB_FOLDER = cfg.SUB_FOLDER
-PIPELINE_NAME = cfg.PIPELINE_NAME
-MODEL_DISPLAY_NAME = cfg.MODEL_DISPLAY_NAME
-CUSTOM_JOB_NAME = cfg.CUSTOM_JOB_NAME
-ENDPOINT_NAME = cfg.ENDPOINT_NAME
-TEMPLATE_JSON = cfg.TEMPLATE_JSON
-JOB_NAME = cfg.JOB_NAME
-
 
 gc.aiplatform_init()
 
