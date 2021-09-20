@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 WORKDIR ./pipeline
 
-ENTRYPOINT ["python","pipeline_kfp.py"]
+ENTRYPOINT ["python","pipeline_kfp_components.py"]
