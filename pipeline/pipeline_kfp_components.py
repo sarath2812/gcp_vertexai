@@ -17,9 +17,6 @@ from kfp.v2.google import experimental
 import sys
 import os
 sys.path.append("..")
-print("="*100)
-print(os.getcwd())
-print("="*100)
 from config import constants as cfg
 from src import gcp_connection as gc
 
@@ -37,6 +34,7 @@ MODEL_DISPLAY_NAME = cfg.MODEL_DISPLAY_NAME
 CUSTOM_JOB_NAME = cfg.CUSTOM_JOB_NAME
 ENDPOINT_NAME = cfg.ENDPOINT_NAME
 TEMPLATE_JSON = cfg.TEMPLATE_JSON
+JOB_NAME = cfg.JOB_NAME
 
 
 print("="*100)
@@ -140,6 +138,4 @@ api_client = AIPlatformClient(
                 region=REGION
                 )
 
-response = api_client.create_run_from_job_spec(
-    TEMPLATE_JSON,
-)
+response = api_client.create_run_from_job_spec(job_spec_path=TEMPLATE_JSON, job_id=JOB_NAME)

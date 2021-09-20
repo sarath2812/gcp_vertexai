@@ -1,0 +1,461 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-endpoint-create": {
+        "executorLabel": "exec-endpoint-create",
+        "inputDefinitions": {
+          "parameters": {
+            "project": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-model-deploy": {
+        "executorLabel": "exec-model-deploy",
+        "inputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "deployed_model_display_name": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-model-upload": {
+        "executorLabel": "exec-model-upload",
+        "inputDefinitions": {
+          "parameters": {
+            "display_name": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            },
+            "serving_container_image_uri": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-prepare-dataset": {
+        "executorLabel": "exec-prepare-dataset",
+        "inputDefinitions": {
+          "parameters": {
+            "dataset_path": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "dataset_train": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-training-model": {
+        "executorLabel": "exec-training-model",
+        "inputDefinitions": {
+          "artifacts": {
+            "dataset": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "bucket_name": {
+              "type": "STRING"
+            },
+            "project_id": {
+              "type": "STRING"
+            },
+            "sub_folder": {
+              "type": "STRING"
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-endpoint-create": {
+          "container": {
+            "args": [
+              "--method.display_name",
+              "custom-endpoint-kfp-test",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['endpoint'].uri}}",
+              "--method.project",
+              "{{$.inputs.parameters['project']}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.remote.aiplatform.remote_runner",
+              "--cls_name",
+              "Endpoint",
+              "--method_name",
+              "create"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:0.1.6"
+          }
+        },
+        "exec-model-deploy": {
+          "container": {
+            "args": [
+              "--method.machine_type",
+              "n1-standard-4",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['endpoint'].uri}}",
+              "--init.project",
+              "{{$.inputs.parameters['project']}}",
+              "--method.endpoint",
+              "{{$.inputs.artifacts['endpoint'].uri}}",
+              "--init.model_name",
+              "{{$.inputs.artifacts['model'].uri}}",
+              "--method.deployed_model_display_name",
+              "{{$.inputs.parameters['deployed_model_display_name']}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.remote.aiplatform.remote_runner",
+              "--cls_name",
+              "Model",
+              "--method_name",
+              "deploy"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:0.1.6"
+          }
+        },
+        "exec-model-upload": {
+          "container": {
+            "args": [
+              "--method.artifact_uri",
+              "gs://aivertex-bucket/custom_model_bucket/",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['model'].uri}}",
+              "--method.project",
+              "{{$.inputs.parameters['project']}}",
+              "--method.display_name",
+              "{{$.inputs.parameters['display_name']}}",
+              "--method.serving_container_image_uri",
+              "{{$.inputs.parameters['serving_container_image_uri']}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.remote.aiplatform.remote_runner",
+              "--cls_name",
+              "Model",
+              "--method_name",
+              "upload"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:0.1.6"
+          }
+        },
+        "exec-prepare-dataset": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "Prepare_dataset"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "(python3 -m ensurepip || python3 -m ensurepip --user) && (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet                 --no-warn-script-location 'pandas' 'fsspec' 'gcsfs' 'sklearn' 'kfp==1.8.1' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet                 --no-warn-script-location 'pandas' 'fsspec' 'gcsfs' 'sklearn' 'kfp==1.8.1' --user) && \"$0\" \"$@\"",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef Prepare_dataset(dataset_train: Output[Dataset],dataset_path:str):\n    \"\"\"\n    input: Dataset_path (GCS location of dataset)\n    Output: Dataset artifact object\n    \"\"\"\n    from sklearn.preprocessing import LabelEncoder\n    import pandas as pd\n\n    data = pd.read_csv(dataset_path)\n    for col in data.drop(columns=[\"target\"]).select_dtypes(include='object').columns:\n        le = LabelEncoder()\n        data[col] = le.fit_transform(data[col])\n\n    data.to_csv(dataset_train.path)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-training-model": {
+          "customJob": {
+            "customJob": {
+              "displayName": "custom-runjob-kfp-test",
+              "jobSpec": {
+                "workerPoolSpecs": [
+                  {
+                    "containerSpec": {
+                      "args": [
+                        "--executor_input",
+                        "{{$}}",
+                        "--function_to_execute",
+                        "Training_model"
+                      ],
+                      "command": [
+                        "sh",
+                        "-c",
+                        "(python3 -m ensurepip || python3 -m ensurepip --user) && (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet                 --no-warn-script-location 'pandas' 'fsspec' 'gcsfs' 'sklearn' 'joblib' 'google-cloud' 'kfp==1.8.1' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet                 --no-warn-script-location 'pandas' 'fsspec' 'gcsfs' 'sklearn' 'joblib' 'google-cloud' 'kfp==1.8.1' --user) && \"$0\" \"$@\"",
+                        "sh",
+                        "-ec",
+                        "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+                        "\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef Training_model(dataset: Input[Dataset],\n                   project_id:str,\n                   bucket_name:str,\n                   sub_folder:str\n                  ):\n    from sklearn.ensemble import RandomForestClassifier\n    from google.cloud import storage\n    import pandas as pd\n    import joblib\n\n    data = pd.read_csv(dataset.path)\n    model = RandomForestClassifier()\n    model.fit(data.drop(columns=[\"target\"]),data.target)\n\n    joblib.dump(model,\"model.joblib\")\n    client = storage.Client(project=project_id)\n    bucket = client.get_bucket(bucket_name)\n    blob = bucket.blob(sub_folder+'model.joblib')\n    blob.upload_from_filename(\"model.joblib\")    \n\n"
+                      ],
+                      "imageUri": "python:3.7"
+                    },
+                    "machineSpec": {
+                      "machineType": "n1-standard-4"
+                    },
+                    "replicaCount": "1"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "custom-pipeline-kfp-test"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "endpoint-create": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-endpoint-create"
+            },
+            "inputs": {
+              "parameters": {
+                "project": {
+                  "componentInputParameter": "project"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "endpoint-create"
+            }
+          },
+          "model-deploy": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-model-deploy"
+            },
+            "dependentTasks": [
+              "endpoint-create",
+              "model-upload"
+            ],
+            "inputs": {
+              "artifacts": {
+                "endpoint": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "endpoint",
+                    "producerTask": "endpoint-create"
+                  }
+                },
+                "model": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "model",
+                    "producerTask": "model-upload"
+                  }
+                }
+              },
+              "parameters": {
+                "deployed_model_display_name": {
+                  "componentInputParameter": "model_display_name"
+                },
+                "project": {
+                  "componentInputParameter": "project"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "model-deploy"
+            }
+          },
+          "model-upload": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-model-upload"
+            },
+            "dependentTasks": [
+              "training-model"
+            ],
+            "inputs": {
+              "parameters": {
+                "display_name": {
+                  "componentInputParameter": "model_display_name"
+                },
+                "project": {
+                  "componentInputParameter": "project"
+                },
+                "serving_container_image_uri": {
+                  "componentInputParameter": "serving_container_image_uri"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "model-upload"
+            }
+          },
+          "prepare-dataset": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-prepare-dataset"
+            },
+            "inputs": {
+              "parameters": {
+                "dataset_path": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "gs://aivertex-bucket/custom_model_bucket/LoanApplyData-bank.csv"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "prepare-dataset"
+            }
+          },
+          "training-model": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-training-model"
+            },
+            "dependentTasks": [
+              "prepare-dataset"
+            ],
+            "inputs": {
+              "artifacts": {
+                "dataset": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "dataset_train",
+                    "producerTask": "prepare-dataset"
+                  }
+                }
+              },
+              "parameters": {
+                "bucket_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "aivertex-bucket"
+                    }
+                  }
+                },
+                "project_id": {
+                  "componentInputParameter": "project"
+                },
+                "sub_folder": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "custom_model_bucket/"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "training-model"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "model_display_name": {
+            "type": "STRING"
+          },
+          "project": {
+            "type": "STRING"
+          },
+          "serving_container_image_uri": {
+            "type": "STRING"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.1"
+  },
+  "runtimeConfig": {
+    "gcsOutputDirectory": "gs://aivertex-bucket/custom_model_bucket/",
+    "parameters": {
+      "model_display_name": {
+        "stringValue": "custom-model-kfp-test"
+      },
+      "project": {
+        "stringValue": "peak-catbird-324206"
+      },
+      "serving_container_image_uri": {
+        "stringValue": "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest"
+      }
+    }
+  }
+}

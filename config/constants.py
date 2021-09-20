@@ -18,29 +18,14 @@ PIPELINE_TEMPLATE = PIPELINE_NAME_TFX + 'pipelinetfx-cicd.json'
 MODULE_PATH = 'gs://aivertex-bucket/TFX_Pipeline/trainer_v2.py'
 
 
-# DEPLOY_IMAGE = "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest"
-# ARTIFACT_DIR = 'gs://aivertex-bucket/custom_model_bucket/'
-# DATASET_PATH = ARTIFACT_DIR+"LoanApplyData-bank.csv"
-# BUCKET_NAME = 'aivertex-bucket'
-# SUB_FOLDER = 'custom_model_bucket/'
-# PIPELINE_NAME = "custom-pipeline-kfp-local-cicd"
-# MODEL_DISPLAY_NAME = "custom-model-kfp-local-cicd"
-# CUSTOM_JOB_NAME = "custom-runjob-kfp-local-cicd"
-# ENDPOINT_NAME = "custom-endpoint-kfp-local-cicd"
-# TEMPLATE_JSON = "pipeline-kfp-local-cicd.json"
-
-
-
-
-PROJECT_ID = 'peak-catbird-324206'
-REGION = 'us-central1'
 DEPLOY_IMAGE = "us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-23:latest"
 ARTIFACT_DIR = 'gs://aivertex-bucket/custom_model_bucket/'
 DATASET_PATH = ARTIFACT_DIR+"LoanApplyData-bank.csv"
 BUCKET_NAME = 'aivertex-bucket'
 SUB_FOLDER = 'custom_model_bucket/'
-PIPELINE_NAME = "custom-pipeline-kfp-test"
-MODEL_DISPLAY_NAME = "custom-model-kfp-test"
-CUSTOM_JOB_NAME = "custom-runjob-kfp-test"
-ENDPOINT_NAME = "custom-endpoint-kfp-test"
-TEMPLATE_JSON = "train_upload_deploy-kfp-test.json"
+PIPELINE_NAME = "custom-pipeline-kfp-cicd"
+MODEL_DISPLAY_NAME = "custom-model-kfp-cicd"
+CUSTOM_JOB_NAME = "custom-runjob-kfp-cicd"
+ENDPOINT_NAME = "custom-endpoint-kfp-cicd"
+TEMPLATE_JSON = "pipeline-kfp-cicd.json"
+JOB_NAME = "kfp-cicd"
